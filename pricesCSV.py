@@ -1,55 +1,79 @@
 #!/usr/bin/python
+import platform
 import urllib
 import datetime
 import re
 import csv
 import json
 import gspread
+import requests
 from oauth2client.service_account import ServiceAccountCredentials
 from forex_python.converter import CurrencyRates
 
+def getAllRecordsFromGoogleSheets(filename, sheetname):
+    # use creds to create a client to interact with the Google Drive API
+    SCOPE = ['https://spreadsheets.google.com/feeds']
+    CREDS = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', SCOPE)
+    client = gspread.authorize(CREDS)
+    localesheet = client.open(filename).worksheet(sheetname)
+    return localesheet.get_all_records()
 
-def getNespressoJson( url ):
-    pattern='var blockConfig =(.*),\n'
+def getNespressoBlockConfigJson( _url ):
+    PATTERN='var blockConfig =(.*),\n'
     class AppURLopener(urllib.FancyURLopener):version = "Mozilla/5.0"
-    req = AppURLopener().open(url)
+    req = AppURLopener().open(_url)
     webpage = req.read().decode('utf-8')
-    blockConfigStr = re.search(pattern, webpage)
+    blockConfigStr = re.search(PATTERN, webpage)
     blockConfig = json.loads(blockConfigStr.group(1))
     return blockConfig
 
-def saveCsv( writer, date, country, fx, json ):
+def getNespressoQuickCapsulesJson( _url ):
+    HEADER = {"Content-Type": "application/json; charset=UTF-8","Content-Length": "4"}
+    r = requests.post(url=_url, data='null', headers=HEADER)
+    quickCapsules = json.loads(r.text)
+    return quickCapsules
+
+def currencyConvert (externalPrice, fx):
+    try:
+        preco = CurrencyRates().convert(fx, 'BRL', externalPrice)
+    except:
+        if fx == 'BRL':
+            preco = externalPrice
+        else:
+            preco = None
+    return preco
+
+def saveBlockConfig( writer, date, country, fx, json ):
     for type in json['groups']:
         for coffees in type['products']:
             id = coffees['id'].encode('utf-8')
-            title = coffees['title'].encode('utf-8')
-            type = coffees['type'].encode('utf-8')
+            name = coffees['name'].encode('utf-8')
             price = coffees['price']
             iconHref = coffees['iconHref'].encode('utf-8')
-            coffeeStrength = coffees['coffeeStrength']
-            numberOfUnits = coffees['numberOfUnits']
-            #print id+"\t"+title+"\t"+type+"\t"+str(coffeeStrength)+"\t"+str(price)+"\t"+str(numberOfUnits)+"\t"+iconHref
-            if numberOfUnits == 1:
-                if (fx == 'BRL'):
-                    preco = price
-                else:
-                    preco = CurrencyRates().convert(fx, 'BRL', price)
-
-                writer.writerow( (date,country,id,title,coffeeStrength,price,preco,iconHref))
+            salesMultiple = coffees['addToCartButton']['salesMultiple']
+            preco = currencyConvert(price, fx)
+            if salesMultiple == 10 and preco != None:
+                writer.writerow( (date,country,id,name,price,preco,iconHref))
     return;
 
-#with open('nespresso-capsules-jp_EN.json') as json_data:
-#    d = json.load(json_data)
-#    parseNespressoJson(d)
+def saveQuickCapsules( writer, date, country, fx, json ):
+    for range in json['capsuleRange']:
+        for list in range['capsuleList']:
+            name = list['name'].encode('utf-8')
+            price = list['priceValue']
+            id = list['code'].encode('utf-8')
+            type = list['type'].encode('utf-8')
+            iconHref = list['mediaQuickOrder']['url'].encode('utf-8')
+            salesMultiple = list['salesMultiple']
+            preco = currencyConvert(price, fx)
+            if salesMultiple == 10 and preco != None:
+                writer.writerow( (date,country,id,name,price,preco,iconHref))
+    return;
 
-
-def readGoogleSheets(filename, sheetname):
-    # use creds to create a client to interact with the Google Drive API
-    scope = ['https://spreadsheets.google.com/feeds']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
-    client = gspread.authorize(creds)
-    localesheet = client.open(filename).worksheet(sheetname)
-    return localesheet.get_all_records()
+##############################################
+################### MAIN #####################
+##############################################
+print ('python version '+platform.python_version())
 
 
 timestamp = datetime.date.today().strftime("%Y%m%d")
@@ -58,13 +82,17 @@ csv_file='./data/capsule-prices-'+timestamp+'.csv'
 f  = open(csv_file, "wb")
 try:
     writer = csv.writer(f, delimiter=';')
-    writer.writerow( ('date','country','id','title','coffeeStrength','localprice','brl','iconHref') )
-    for locale in readGoogleSheets('nespresso', 'locale'):
-        if locale['extract_strategy'] == 'blockConfig':
-                country = locale['country']
-                url = locale['capsules_url']
-                fx = locale['fx']
-                print('Processing '+ country)
-                saveCsv(writer, timestamp, country, fx, getNespressoJson(url) )
+    writer.writerow( ('date','country','id','name','localprice','brl','iconHref') )
+    for locale in getAllRecordsFromGoogleSheets('nespresso', 'locale'):
+        if locale['status'] == 'ok':
+            fx = locale['fx']
+            country = locale['country']
+            url = locale['capsules_url']
+            if locale['extract_strategy'] == 'blockConfig':
+                print('Processing blockConfig from '+ country)
+                saveBlockConfig(writer, timestamp, country, fx, getNespressoBlockConfigJson(url) )
+            if locale['extract_strategy'] == 'quickCapsules':
+                print('Processing quickCapsules from '+ country)
+                saveQuickCapsules(writer, timestamp, country, fx, getNespressoQuickCapsulesJson(url) )
 finally:
     f.close()
