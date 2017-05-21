@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import platform
 import urllib
+import time
 import datetime
 import re
 import csv
@@ -73,8 +74,9 @@ def saveQuickCapsules( writer, date, country, fx, json ):
 ##############################################
 ################### MAIN #####################
 ##############################################
-print ('python version '+platform.python_version())
 
+startGlobal = time.time()
+print ('python version '+platform.python_version())
 
 timestamp = datetime.date.today().strftime("%Y%m%d")
 csv_file='./data/capsule-prices-'+timestamp+'.csv'
@@ -84,15 +86,24 @@ try:
     writer = csv.writer(f, delimiter=';')
     writer.writerow( ('date','country','id','name','localprice','brl','iconHref') )
     for locale in getAllRecordsFromGoogleSheets('nespresso', 'locale'):
-        if locale['status'] == 'ok':
+        if locale['status'] == 'to_test':
             fx = locale['fx']
             country = locale['country']
             url = locale['capsules_url']
             if locale['extract_strategy'] == 'blockConfig':
-                print('Processing blockConfig from '+ country)
+                start = time.time()
+                print('Processing blockConfig from '+ country),
                 saveBlockConfig(writer, timestamp, country, fx, getNespressoBlockConfigJson(url) )
+                end = time.time()
+                print('. Took '+ str(end - start) + ' seconds!')
             if locale['extract_strategy'] == 'quickCapsules':
-                print('Processing quickCapsules from '+ country)
+                start = time.time()
+                print('Processing quickCapsules from '+ country),
                 saveQuickCapsules(writer, timestamp, country, fx, getNespressoQuickCapsulesJson(url) )
+                end = time.time()
+                print('. Took '+ str(end - start) + ' seconds!')
 finally:
     f.close()
+endGlobal = time.time()
+globalMinutes, globalSeconds = divmod(endGlobal - startGlobal , 60)
+print('All process took '+ str(globalMinutes) + ' minutes and '+ str(globalSeconds) + ' seconds!')
