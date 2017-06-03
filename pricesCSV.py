@@ -1,4 +1,6 @@
 #!/usr/bin/python
+import os
+import sys
 import platform
 import urllib
 import time
@@ -79,9 +81,10 @@ startGlobal = time.time()
 print ('python version '+platform.python_version())
 
 timestamp = datetime.date.today().strftime("%Y%m%d")
+os.chdir(sys.path[0]) # change working directory to script directory
 csv_file='./data/capsule-prices-'+timestamp+'.csv'
 
-f  = open(csv_file, "wb")
+f  = open(csv_file, "wt")
 try:
     writer = csv.writer(f, delimiter=';')
     writer.writerow( ('date','country','id','name','localprice','brl','iconHref') )
