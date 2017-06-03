@@ -1,0 +1,7 @@
+#key
+client_secret.json
+#data
+data/
+*.csv
+#temp files
+sandbox.py
