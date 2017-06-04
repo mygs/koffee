@@ -21,6 +21,22 @@ def getAllRecordsFromGoogleSheets(filename, sheetname):
     localesheet = client.open(filename).worksheet(sheetname)
     return localesheet.get_all_records()
 
+def getFXcache():
+    fxcache = {}
+    forexList = getAllRecordsFromGoogleSheets('nespresso', 'forex')
+    for forexFrom in forexList:
+        for forexTo in forexList:
+            fromCode = forexFrom['code']
+            toCode = forexTo['code']
+            rate = 0
+            try:
+                rate = CurrencyRates().convert(toCode, fromCode, 1.0)
+            except:
+                if fromCode == toCode:
+                    rate = 1.0
+            fxcache[toCode, fromCode] = rate
+    return fxcache
+
 def getNespressoBlockConfigJson( _url ):
     PATTERN='var blockConfig =(.*),\n'
     if sys.version_info[0] == 2:
@@ -39,41 +55,36 @@ def getNespressoQuickCapsulesJson( _url ):
     quickCapsules = json.loads(r.text)
     return quickCapsules
 
-def currencyConvert (externalPrice, fx):
-    try:
-        preco = CurrencyRates().convert(fx, 'BRL', externalPrice)
-    except:
-        if fx == 'BRL':
-            preco = externalPrice
-        else:
-            preco = None
-    return preco
-
-def saveBlockConfig( writer, date, country, fx, json ):
+def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fxcache ):
     for type in json['groups']:
         for coffees in type['products']:
-            id = coffees['id']#.encode('utf-8')
-            name = coffees['name']#.encode('utf-8')
-            price = coffees['price']
-            iconHref = coffees['iconHref']#.encode('utf-8')
+            id = coffees['id'].encode('utf-8')
+            name = coffees['name'].encode('utf-8')
+            localPrice = coffees['price']
+            iconHref = coffees['iconHref'].encode('utf-8')
             salesMultiple = coffees['addToCartButton']['salesMultiple']
-            preco = currencyConvert(price, fx)
-            if salesMultiple == 10 and preco != None:
-                writer.writerow( (date,country,id,name,price,preco,iconHref))
+            if salesMultiple == 10: #capsules!
+                writertypes.writerow((country,id,name,iconHref))
+                for forex in getAllRecordsFromGoogleSheets('nespresso', 'forex'):
+                    #convertedPrice = currencyConvert (localPrice,fx,forex['code'])
+                    convertedPrice = localPrice*fxcache[localFX, forex['code']]
+                    writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
     return;
 
-def saveQuickCapsules( writer, date, country, fx, json ):
+def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, fxcache ):
     for range in json['capsuleRange']:
         for list in range['capsuleList']:
-            name = list['name']#.encode('utf-8')
-            price = list['priceValue']
-            id = list['code']#.encode('utf-8')
-            type = list['type']#.encode('utf-8')
-            iconHref = list['mediaQuickOrder']['url']#.encode('utf-8')
+            name = list['name'].encode('utf-8')
+            localPrice = list['priceValue']
+            id = list['code'].encode('utf-8')
+            iconHref = list['mediaQuickOrder']['url'].encode('utf-8')
             salesMultiple = list['salesMultiple']
-            preco = currencyConvert(price, fx)
-            if salesMultiple == 10 and preco != None:
-                writer.writerow( (date,country,id,name,price,preco,iconHref))
+            if salesMultiple == 10:#capsules!
+                writertypes.writerow((country,id,name,iconHref))
+                for forex in getAllRecordsFromGoogleSheets('nespresso', 'forex'):
+                    #convertedPrice = currencyConvert (localPrice,fx,forex['code'])
+                    convertedPrice = localPrice*fxcache[localFX, forex['code']]
+                    writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
     return;
 
 ##############################################
@@ -83,14 +94,27 @@ def saveQuickCapsules( writer, date, country, fx, json ):
 startGlobal = time.time()
 print ('python version '+platform.python_version())
 
-timestamp = datetime.date.today().strftime("%Y%m%d-X")
-os.chdir(sys.path[0]) # change working directory to script directory
-csv_file='./data/capsule-prices-'+timestamp+'.csv'
 
-f  = open(csv_file, "wt")
+start = time.time()
+fxcache = getFXcache()
+end = time.time()
+minutes, seconds = divmod(end - start, 60)
+print('FX Cache built in '+ str(minutes) + ' minutes and '+ str(int(seconds)) + ' seconds!')
+
+timestamp = datetime.date.today().strftime("%Y%m%d")
+os.chdir(sys.path[0]) # change working directory to script directory
+csv_file_prices='./data/capsule-prices-'+timestamp+'.csv'
+csv_file_types='./data/capsule-types-'+timestamp+'.csv'
+
+fprices  = open(csv_file_prices, "wt")
+ftypes  = open(csv_file_types, "wt")
+
 try:
-    writer = csv.writer(f, delimiter=';')
-    writer.writerow( ('date','country','id','name','localprice','brl','iconHref') )
+    writerprices = csv.writer(fprices, delimiter=';')
+    writertypes = csv.writer(ftypes, delimiter=';')
+
+    writerprices.writerow( ('date','country','id','name','fx', 'price') )
+    writertypes.writerow( ('country','id','name','iconHref') )
     for locale in getAllRecordsFromGoogleSheets('nespresso', 'locale'):
         if locale['status'] == 'ok':
             fx = locale['fx']
@@ -98,16 +122,18 @@ try:
             url = locale['capsules_url']
             if locale['extract_strategy'] == 'blockConfig':
                 start = time.time()
-                saveBlockConfig(writer, timestamp, country, fx, getNespressoBlockConfigJson(url) )
+                saveBlockConfig(writertypes, writerprices, timestamp, country, fx, getNespressoBlockConfigJson(url), fxcache)
                 end = time.time()
                 print('Processed Nespresso(blockConfig) from '+ country+'. Took '+ str(int(end - start)) + ' seconds!')
             if locale['extract_strategy'] == 'quickCapsules':
                 start = time.time()
-                saveQuickCapsules(writer, timestamp, country, fx, getNespressoQuickCapsulesJson(url) )
+                saveQuickCapsules(writertypes, writerprices, timestamp, country, fx, getNespressoQuickCapsulesJson(url), fxcache)
                 end = time.time()
                 print('\rProcessed Nespresso(quickCapsules) from '+ country+'. Took '+ str(int(end - start)) + ' seconds!')
 finally:
-    f.close()
+    fprices.close()
+    ftypes.close()
+
 endGlobal = time.time()
 globalMinutes, globalSeconds = divmod(endGlobal - startGlobal , 60)
 print('\rAll process took '+ str(globalMinutes) + ' minutes and '+ str(int(globalSeconds)) + ' seconds!')
