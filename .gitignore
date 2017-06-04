@@ -2,6 +2,8 @@
 client_secret.json
 #data
 data/
+samples/
 *.csv
-#temp files
-sandbox.py
+*.json
+#temp files dir
+sandbox/
