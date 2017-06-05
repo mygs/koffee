@@ -16,12 +16,12 @@ def autolabel(rects):
 print ('python version '+platform.python_version())
 fig, ax = plt.subplots()
 os.chdir(sys.path[0]) # change working directory to script directory
-df = pd.read_csv('./data/capsule-prices-20170603.csv', delimiter=';')
-df_filtered = df[(df.date == 20170603) & (df.name == 'Ristretto')].sort_values(['brl'], ascending=False)
+df = pd.read_csv('./data/capsule-prices-20170604.csv', delimiter=';')
+df_filtered = df[(df.date == 20170604) & (df.name == 'Ristretto')& (df.fx == 'BRL')].sort_values(['price'], ascending=False)
 countries = df_filtered['country'].as_matrix()
 n_countries = len(countries)
 y_pos = np.arange(n_countries)
-prices = df_filtered['brl'].as_matrix()
+prices = df_filtered['price'].as_matrix()
 rec = ax.barh(y_pos, prices, linewidth=0, align='center', color='#72D776')
 xmin = prices.min() - (prices.max() - prices.min())*.08
 xmax = prices.max() + (prices.max() - prices.min())*.16
