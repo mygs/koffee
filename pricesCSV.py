@@ -25,7 +25,7 @@ def getAllRecordsFromGoogleSheets(filename, sheetname):
 def getFXcache():
     fxcache = {}
     forexList = getAllRecordsFromGoogleSheets('nespresso', 'forex')
-    pbar = tqdm(total=len(forexList)**2,desc="Processing FX Cache ")
+    pbar = tqdm(total=len(forexList)**2,desc="Processing FX Cache")
     for forexFrom in forexList:
         for forexTo in forexList:
             fromCode = forexFrom['code']
@@ -38,6 +38,7 @@ def getFXcache():
                     rate = 1.0
             fxcache[toCode, fromCode] = rate
             pbar.update(1)
+    pbar.close()
     return fxcache
 
 def getNespressoBlockConfigJson( _url ):
@@ -60,8 +61,8 @@ def getNespressoQuickCapsulesJson( _url ):
 
 def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
     for type in json['groups']:
+        pbar = tqdm(total=len(type['products'])*len(forexList),desc="Processing data from "+country)
         for coffees in type['products']:
-            pbar = tqdm(total=len(type['products'])*len(forexList),desc="Processing data from "+country+" ")
             id = coffees['id'].encode('utf-8')
             name = coffees['name'].encode('utf-8')
             localPrice = coffees['price']
@@ -73,12 +74,13 @@ def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fx
                     convertedPrice = localPrice*fxcache[localFX, forex['code']]
                     writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
                     pbar.update(1)
+        pbar.close()
     return;
 
 def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
     for range in json['capsuleRange']:
+        pbar = tqdm(total=len(range['capsuleList'])*len(forexList),desc="Processing data from "+country)
         for list in range['capsuleList']:
-            pbar = tqdm(total=len(range['capsuleList'])*len(forexList),desc="Processing data from "+country+" ")
             name = list['name'].encode('utf-8')
             localPrice = list['priceValue']
             id = list['code'].encode('utf-8')
@@ -90,13 +92,13 @@ def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, 
                     convertedPrice = localPrice*fxcache[localFX, forex['code']]
                     writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
                     pbar.update(1)
+        pbar.close()
     return;
 
 ##############################################
 ################### MAIN #####################
 ##############################################
 startGlobal = time.time()
-
 print ('python version '+platform.python_version())
 
 fxcache = getFXcache()
