@@ -60,51 +60,47 @@ def getNespressoQuickCapsulesJson( _url ):
     return quickCapsules
 
 def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
+    pbar = tqdm(total=len(json['groups']),desc="Processing data from "+country)
     for type in json['groups']:
-        pbar = tqdm(total=len(type['products'])*len(forexList),desc="Processing data from "+country)
-        for coffees in type['products']:
+        for coffees in filter(lambda x: x['addToCartButton']['salesMultiple']== 10,type['products']):
             id = coffees['id'].encode('utf-8')
             name = coffees['name'].encode('utf-8')
             localPrice = coffees['price']
             iconHref = coffees['iconHref'].encode('utf-8')
-            salesMultiple = coffees['addToCartButton']['salesMultiple']
-            if salesMultiple == 10: #capsules!
-                writertypes.writerow((country,id,name,iconHref))
-                for forex in forexList:
-                    convertedPrice = localPrice*fxcache[localFX, forex['code']]
-                    writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
-                    pbar.update(1)
-        pbar.close()
+            writertypes.writerow((country,id,name,iconHref))
+            for forex in forexList:
+                convertedPrice = localPrice*fxcache[localFX, forex['code']]
+                writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
+        pbar.update(1)
+    pbar.close()
     return;
 
 def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
-    for range in json['capsuleRange']:
-        pbar = tqdm(total=len(range['capsuleList'])*len(forexList),desc="Processing data from "+country)
-        for list in range['capsuleList']:
+    pbar = tqdm(total=len(json['capsuleRange']),desc="Processing data from "+country)
+    for capsulerange in json['capsuleRange']:
+        for list in filter(lambda x: x['salesMultiple']== 10,capsulerange['capsuleList']):
             name = list['name'].encode('utf-8')
             localPrice = list['priceValue']
             id = list['code'].encode('utf-8')
             iconHref = list['mediaQuickOrder']['url'].encode('utf-8')
-            salesMultiple = list['salesMultiple']
-            if salesMultiple == 10:#capsules!
-                writertypes.writerow((country,id,name,iconHref))
-                for forex in forexList:
-                    convertedPrice = localPrice*fxcache[localFX, forex['code']]
-                    writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
-                    pbar.update(1)
-        pbar.close()
+            writertypes.writerow((country,id,name,iconHref))
+            for forex in forexList:
+                convertedPrice = localPrice*fxcache[localFX, forex['code']]
+                writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
+        pbar.update(1)
+    pbar.close()
     return;
 
 ##############################################
 ################### MAIN #####################
 ##############################################
 startGlobal = time.time()
+os.chdir(sys.path[0]) # change working directory to script directory
 print ('python version '+platform.python_version())
 
 fxcache = getFXcache()
 
-timestamp = datetime.date.today().strftime("%Y%m%d-X")
-os.chdir(sys.path[0]) # change working directory to script directory
+timestamp = datetime.date.today().strftime("%Y%m%d")
 csv_file_prices='./data/capsule-prices-'+timestamp+'.csv'
 csv_file_types='./data/capsule-types-'+timestamp+'.csv'
 
