@@ -10,6 +10,7 @@ import csv
 import json
 import gspread
 import requests
+import pickle
 from tqdm import tqdm
 from oauth2client.service_account import ServiceAccountCredentials
 from forex_python.converter import CurrencyRates
@@ -23,23 +24,32 @@ def getAllRecordsFromGoogleSheets(filename, sheetname):
     return localesheet.get_all_records()
 
 def getFXcache():
-    fxcache = {}
-    forexList = getAllRecordsFromGoogleSheets('nespresso', 'forex')
-    pbar = tqdm(total=len(forexList)**2,desc="Processing FX Cache")
-    for forexFrom in forexList:
-        for forexTo in forexList:
-            fromCode = forexFrom['code']
-            toCode = forexTo['code']
-            rate = 0
-            try:
-                rate = CurrencyRates().convert(toCode, fromCode, 1.0)
-            except:
-                if fromCode == toCode:
-                    rate = 1.0
-            fxcache[toCode, fromCode] = rate
-            pbar.update(1)
-    pbar.close()
-    return fxcache
+    lastModification = 0
+    if(os.path.isfile('fxcache.pkl')):
+        lastModification = os.path.getmtime('fxcache.pkl')
+    if (time.time() - lastModification <= 1800): # 30min
+        with open('fxcache.pkl', 'rb') as f:
+            return pickle.load(f)
+    else:
+        fxcache = {}
+        forexList = getAllRecordsFromGoogleSheets('nespresso', 'forex')
+        pbar = tqdm(total=len(forexList)**2,desc="Processing FX Cache")
+        for forexFrom in forexList:
+            for forexTo in forexList:
+                fromCode = forexFrom['code']
+                toCode = forexTo['code']
+                rate = 0
+                try:
+                    rate = CurrencyRates().convert(toCode, fromCode, 1.0)
+                except:
+                    if fromCode == toCode:
+                        rate = 1.0
+                fxcache[toCode, fromCode] = rate
+                pbar.update(1)
+        with open('fxcache.pkl', 'wb') as f:
+            pickle.dump(fxcache, f, pickle.HIGHEST_PROTOCOL)
+        pbar.close()
+        return fxcache
 
 def getNespressoBlockConfigJson( _url ):
     PATTERN='var blockConfig =(.*),\n'
