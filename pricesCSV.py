@@ -28,6 +28,7 @@ def getFXcache():
     if(os.path.isfile('./data/fxcache.pkl')):
         lastModification = os.path.getmtime('./data/fxcache.pkl')
     if (time.time() - lastModification <= 18000): # 5 horas
+        print("FX Cache got at "+time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastModification)))
         with open('./data/fxcache.pkl', 'rb') as f:
             return pickle.load(f)
     else:
@@ -70,7 +71,6 @@ def getNespressoQuickCapsulesJson( _url ):
     return quickCapsules
 
 def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
-    pbar = tqdm(total=len(json['groups']),desc="Processing data from "+country)
     for type in json['groups']:
         for coffees in filter(lambda x: x['addToCartButton']['salesMultiple']== 10,type['products']):
             id = coffees['id'].encode('utf-8')
@@ -81,12 +81,9 @@ def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fx
             for forex in forexList:
                 convertedPrice = localPrice*fxcache[localFX, forex['code']]
                 writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
-        pbar.update(1)
-    pbar.close()
     return;
 
 def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
-    pbar = tqdm(total=len(json['capsuleRange']),desc="Processing data from "+country)
     for capsulerange in json['capsuleRange']:
         for list in filter(lambda x: x['salesMultiple']==10,capsulerange['capsuleList']):
             name = list['name'].encode('utf-8')
@@ -97,8 +94,6 @@ def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, 
             for forex in forexList:
                 convertedPrice = localPrice*fxcache[localFX, forex['code']]
                 writerprices.writerow((date,country,id,name,forex['code'],convertedPrice))
-        pbar.update(1)
-    pbar.close()
     return;
 
 ##############################################
@@ -121,20 +116,23 @@ try:
     forexList = getAllRecordsFromGoogleSheets('nespresso', 'forex')
     writerprices = csv.writer(fprices, delimiter=';')
     writertypes = csv.writer(ftypes, delimiter=';')
-
     writerprices.writerow( ('date','country','id','name','fx', 'price') )
     writertypes.writerow( ('country','id','name','iconHref') )
-    for locale in getAllRecordsFromGoogleSheets('nespresso', 'locale'):
-        if locale['status'] == 'ok':
-            fx = locale['fx']
-            country = locale['country']
-            url = locale['capsules_url']
-            if locale['extract_strategy'] == 'blockConfig':
-                saveBlockConfig(writertypes, writerprices, timestamp, country,
-                                fx, getNespressoBlockConfigJson(url), fxcache, forexList)
-            if locale['extract_strategy'] == 'quickCapsules':
-                saveQuickCapsules(writertypes, writerprices, timestamp, country,
-                                fx, getNespressoQuickCapsulesJson(url), fxcache, forexList)
+    locales = filter(lambda x: x['status'] == 'ok', getAllRecordsFromGoogleSheets('nespresso', 'locale'))
+    tot_locales = len(locales)
+    l = 1
+    for locale in locales:
+        country = locale['country']
+        print("["+str(l)+"/"+str(tot_locales)+"] Processing data from "+country)
+        l = l + 1
+        fx = locale['fx']
+        url = locale['capsules_url']
+        if locale['extract_strategy'] == 'blockConfig':
+            saveBlockConfig(writertypes, writerprices, timestamp, country,
+                            fx, getNespressoBlockConfigJson(url), fxcache, forexList)
+        if locale['extract_strategy'] == 'quickCapsules':
+            saveQuickCapsules(writertypes, writerprices, timestamp, country,
+                            fx, getNespressoQuickCapsulesJson(url), fxcache, forexList)
 finally:
     fprices.close()
     ftypes.close()
