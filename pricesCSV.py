@@ -25,10 +25,10 @@ def getAllRecordsFromGoogleSheets(filename, sheetname):
 
 def getFXcache():
     lastModification = 0
-    if(os.path.isfile('fxcache.pkl')):
-        lastModification = os.path.getmtime('fxcache.pkl')
-    if (time.time() - lastModification <= 1800): # 30min
-        with open('fxcache.pkl', 'rb') as f:
+    if(os.path.isfile('./data/fxcache.pkl')):
+        lastModification = os.path.getmtime('./data/fxcache.pkl')
+    if (time.time() - lastModification <= 18000): # 5 horas
+        with open('./data/fxcache.pkl', 'rb') as f:
             return pickle.load(f)
     else:
         fxcache = {}
@@ -46,7 +46,7 @@ def getFXcache():
                         rate = 1.0
                 fxcache[toCode, fromCode] = rate
                 pbar.update(1)
-        with open('fxcache.pkl', 'wb') as f:
+        with open('./data/fxcache.pkl', 'wb') as f:
             pickle.dump(fxcache, f, pickle.HIGHEST_PROTOCOL)
         pbar.close()
         return fxcache
@@ -88,7 +88,7 @@ def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fx
 def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
     pbar = tqdm(total=len(json['capsuleRange']),desc="Processing data from "+country)
     for capsulerange in json['capsuleRange']:
-        for list in filter(lambda x: x['salesMultiple']== 10,capsulerange['capsuleList']):
+        for list in filter(lambda x: x['salesMultiple']==10,capsulerange['capsuleList']):
             name = list['name'].encode('utf-8')
             localPrice = list['priceValue']
             id = list['code'].encode('utf-8')

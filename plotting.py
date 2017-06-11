@@ -10,14 +10,14 @@ def autolabel(rects):
     for rect in rects:
         height = rect.get_height()
         width = rect.get_width()
-        ax.text(width+0.08,rect.get_y() + height/2.,
+        ax.text(width+0.06,rect.get_y() + height/2.,
                 "${:.2f}".format(width),
                 ha='center', va='center')
 print ('python version '+platform.python_version())
 fig, ax = plt.subplots()
 os.chdir(sys.path[0]) # change working directory to script directory
-df = pd.read_csv('./data/capsule-prices-20170604.csv', delimiter=';')
-df_filtered = df[(df.date == 20170604) & (df.name == 'Ristretto')& (df.fx == 'BRL')].sort_values(['price'], ascending=False)
+df = pd.read_csv('./data/capsule-prices-20170610.csv', delimiter=';')
+df_filtered = df[(df.date == 20170610) & (df.name == 'Ristretto')& (df.fx == 'BRL')].sort_values(['price'], ascending=False)
 countries = df_filtered['country'].as_matrix()
 n_countries = len(countries)
 y_pos = np.arange(n_countries)
