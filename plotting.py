@@ -8,7 +8,7 @@ import numpy as np
 import platform
 
 capsule = 'Ristretto'
-date = 20170615
+date = 20170616
 
 def autolabel(rects):
     for rect in rects:
@@ -23,7 +23,7 @@ os.chdir(sys.path[0]) # change working directory to script directory
 fig, ax = plt.subplots()
 df = pd.read_csv('./data/capsule-prices-'+str(date)+'.csv', delimiter=';')
 df_filtered = df[(df.date == date)&(df.name == capsule)&(df.fx == 'BRL')].sort_values(['price'], ascending=True)
-#print(df_filtered)
+print(df_filtered)
 countries = df_filtered['country'].as_matrix()
 n_countries = len(countries)
 y_pos = np.arange(n_countries)

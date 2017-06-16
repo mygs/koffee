@@ -73,10 +73,10 @@ def getNespressoQuickCapsulesJson( _url ):
 def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
     for type in json['groups']:
         for coffees in filter(lambda x: x['addToCartButton']['salesMultiple']== 10,type['products']):
-            id = coffees['id'].encode('utf-8')
-            name = coffees['name'].encode('utf-8')
+            id = coffees['id']#.encode('utf-8')
+            name = coffees['name']#.encode('utf-8')
             localPrice = coffees['price']
-            iconHref = coffees['iconHref'].encode('utf-8')
+            iconHref = coffees['iconHref']#.encode('utf-8')
             writertypes.writerow((country,id,name,iconHref))
             for forex in forexList:
                 convertedPrice = localPrice*fxcache[localFX, forex['code']]
@@ -86,10 +86,10 @@ def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fx
 def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
     for capsulerange in json['capsuleRange']:
         for list in filter(lambda x: x['salesMultiple']==10,capsulerange['capsuleList']):
-            name = list['name'].encode('utf-8')
+            name = list['name']#.encode('utf-8')
             localPrice = list['priceValue']
-            id = list['code'].encode('utf-8')
-            iconHref = list['mediaQuickOrder']['url'].encode('utf-8')
+            id = list['code']#.encode('utf-8')
+            iconHref = list['mediaQuickOrder']['url']#.encode('utf-8')
             writertypes.writerow((country,id,name,iconHref))
             for forex in forexList:
                 convertedPrice = localPrice*fxcache[localFX, forex['code']]
@@ -118,7 +118,7 @@ try:
     writertypes = csv.writer(ftypes, delimiter=';')
     writerprices.writerow( ('date','country','id','name','fx', 'price') )
     writertypes.writerow( ('country','id','name','iconHref') )
-    locales = filter(lambda x: x['status'] == 'ok', getAllRecordsFromGoogleSheets('nespresso', 'locale'))
+    locales = list(filter(lambda x: x['status'] == 'ok', getAllRecordsFromGoogleSheets('nespresso', 'locale')))
     tot_locales = len(locales)
     l = 1
     for locale in locales:
