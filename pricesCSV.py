@@ -73,10 +73,10 @@ def getNespressoQuickCapsulesJson( _url ):
 def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
     for type in json['groups']:
         for coffees in filter(lambda x: x['addToCartButton']['salesMultiple']== 10,type['products']):
-            id = coffees['id']#.encode('utf-8')
-            name = coffees['name']#.encode('utf-8')
+            id = coffees['id'].encode('utf-8') if sys.version_info[0] == 2 else coffees['id']
+            name = coffees['name'].encode('utf-8') if sys.version_info[0] == 2 else coffees['name']
             localPrice = coffees['price']
-            iconHref = coffees['iconHref']#.encode('utf-8')
+            iconHref = coffees['iconHref'].encode('utf-8') if sys.version_info[0] == 2 else coffees['iconHref']
             writertypes.writerow((country,id,name,iconHref))
             for forex in forexList:
                 convertedPrice = localPrice*fxcache[localFX, forex['code']]
@@ -86,10 +86,10 @@ def saveBlockConfig( writertypes, writerprices, date, country, localFX, json, fx
 def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, fxcache, forexList ):
     for capsulerange in json['capsuleRange']:
         for list in filter(lambda x: x['salesMultiple']==10,capsulerange['capsuleList']):
-            name = list['name']#.encode('utf-8')
+            name = list['name'].encode('utf-8') if sys.version_info[0] == 2 else list['name']
             localPrice = list['priceValue']
-            id = list['code']#.encode('utf-8')
-            iconHref = list['mediaQuickOrder']['url']#.encode('utf-8')
+            id = list['code'].encode('utf-8') if sys.version_info[0] == 2 else list['code']
+            iconHref = list['mediaQuickOrder']['url'].encode('utf-8')  if sys.version_info[0] == 2 else list['mediaQuickOrder']['url']
             writertypes.writerow((country,id,name,iconHref))
             for forex in forexList:
                 convertedPrice = localPrice*fxcache[localFX, forex['code']]
