@@ -88,7 +88,7 @@ def saveQuickCapsules( writertypes, writerprices, date, country, localFX, json, 
         for list in filter(lambda x: x['salesMultiple']==10,capsulerange['capsuleList']):
             name = list['name'].encode('utf-8') if sys.version_info[0] == 2 else list['name']
             localPrice = list['priceValue']
-            id = list['code'].encode('utf-8') if sys.version_info[0] == 2 else list['code']
+            id = list['code'].encode('utf-8').replace("'","") if sys.version_info[0] == 2 else list['code'].replace("'","")
             iconHref = list['mediaQuickOrder']['url'].encode('utf-8')  if sys.version_info[0] == 2 else list['mediaQuickOrder']['url']
             writertypes.writerow((country,id,name,iconHref))
             for forex in forexList:

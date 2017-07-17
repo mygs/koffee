@@ -8,7 +8,7 @@ import numpy as np
 import platform
 
 capsule = 'Ristretto'
-date = 20170616
+date = 20170617
 
 def autolabel(rects):
     for rect in rects:
