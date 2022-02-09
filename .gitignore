@@ -6,3 +6,5 @@ samples/
 *.json
 #temp files dir
 sandbox/
+*.cfg
+nespresso/notebook/.ipynb_checkpoints/ristretto_index-checkpoint.ipynb
