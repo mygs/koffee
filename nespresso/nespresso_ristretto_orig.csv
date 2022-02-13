@@ -1,0 +1,68 @@
+region,country,flag_code,fx,ristretto_url
+Africa,Mauritius,im,MUR,https://www.buynespresso.com/mu_en/ispirazione-ristretto-italiano
+Africa,Morocco,ma,MAD,https://ma.buynespresso.com/ma_en/ispirazione-ristretto-italiano
+Africa,South Africa,za,ZAR,https://za.buynespresso.com/za_en/coffee/original/ispirazione-ristretto-italiano
+Africa,Egypt,eg,EGP,https://www.buynespresso.com/eg_en/ispirazione-ristretto-italiano
+Africa,Ivory Coast,ci,XOF,https://www.buynespresso.com/ci_en/ispirazione-ristretto-italiano
+Americas,Brazil,br,BRL,https://www.nespresso.com/br/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Americas,Canada,ca,CAD,https://www.nespresso.com/ca/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Americas,Colombia,co,COP,https://www.nespresso.com/co/en/order/capsules/ispirazione-ristretto-italiano
+Americas,Argentina,ar,ARS,https://www.nespresso.com/ar/en/order/capsules/ispirazione-ristretto-italiano-coffee
+Americas,Chile,cl,CLP,https://www.nespresso.com/cl/en/order/capsules/original/capsula-de-cafe-ispirazione-ristretto-italiano
+Americas,Panama,pa,USD,https://nespresso.com.pa/producto/ristretto-italiano/
+Americas,Mexico,mx,MXN,https://www.nespresso.com/mx/en/order/capsules/original/ispirazione-ristretto-italiano-coffee
+Americas,United States,us,USD,https://www.nespresso.com/us/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,Australia,au,AUD,https://www.nespresso.com/au/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,China,cn,CNY,https://www.nespresso.com/cn/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,Philippines,ph,PHP,https://www.nespresso.ph/product/ispirazione-ristretto-italiano
+Asia & Oceania,Vietnam,vn,VND,https://www.nespresso.vn/ispirazione-ristretto-italiano/
+Asia & Oceania,Taiwan,tw,TWD,https://www.nespresso.com/tw/en/order/capsules/ispirazione-ristretto-italiano
+Asia & Oceania,Hong Kong,hk,HKD,https://www.nespresso.com/hk/en/order/capsules/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,Japan,jp,JPY,https://www.nespresso.com/jp/en/order/capsules/original/ispirazione-italiano
+Asia & Oceania,Malaysia,my,MYR,https://www.nespresso.com/my/en/order/capsules/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,New Zealand,nz,NZD,https://www.nespresso.com/nz/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,Singapore,sg,SGD,https://www.nespresso.com/sg/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,South Korea,kr,KRW,https://www.nespresso.com/kr/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Asia & Oceania,Thailand,th,THB,https://www.nespresso.com/th/en/order/capsules/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Austria,at,EUR,https://www.nespresso.com/at/en/order/capsules/original/coffee-ispirazione-ristretto-italiano
+Europe,Belgium,be,EUR,https://www.nespresso.com/be/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Bulgaria,bg,BGN,https://www.nespresso.bg/en/ispirazione-italiana/311-ispirazione-ristretto-italiano
+Europe,Croatia,hr,HRK,https://www.nespresso.hr/en/ispirazione-italiana/213-ispirazione-ristretto-italiano
+Europe,Czech Republic,cz,CZK,https://www.nespresso.com/cz/en/order/capsules/original/coffee-capsules-ristretto
+Europe,Denmark,dk,DKK,https://www.nespresso.com/dk/en/order/capsules/original/ispirazione-ristretto-coffee
+Europe,Estonia,ee,EUR,https://nespresso.ee/en/ispirazione-italiana-coffee-capsules/726-ispirazione-ristretto-italiano-7630054474828.html
+Europe,Spain,es,EUR,https://www.nespresso.com/es/en/order/capsules/original/ristretto-coffee
+Europe,Finland,fi,EUR,https://www.nespresso.com/fi/en/order/capsules/original/ispirazione-ristretto-coffee
+Europe,France,fr,EUR,https://www.nespresso.com/de/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Germany,de,EUR,https://www.nespresso.com/de/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Greece,gr,EUR,https://www.nespresso.com/gr/en/order/capsules/original/ispirazione-ristretto
+Europe,Hungary,hu,HUF,https://www.nespresso.com/hu/en/order/capsules/original/coffee-capsule-ristretto-italiano
+Europe,Iceland,is,ISK,https://nespresso.is/collections/kaffi/products/ispirazioneristrettoitaliano
+Europe,Ireland,ie,EUR,https://www.nespresso.com/ie/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Italy,it,EUR,https://www.nespresso.com/it/en/order/capsules/original/capsule-e-cialde-caffe-ispirazione-ristretto-italiano
+Europe,Latvia,lv,EUR,https://nespresso.lv/en/ispirazione-italiana-coffee-capsules/726-ispirazione-ristretto-italiano-7630054474828.html
+Europe,Liechtenstein,li,CHF,https://www.nespresso.com/ch/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Luxembourg,lu,EUR,https://www.nespresso.com/lu/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Malta,mt,EUR,https://nespresso.com.mt/product/ispirazione-ristretto-italiano/
+Europe,The Netherlands,nl,EUR,https://www.nespresso.com/nl/en/koffiecups/ispirazione-italiana/ispirazione-ristretto-italiano-koffiecups
+Europe,Norway,no,NOK,https://www.nespresso.com/no/en/order/capsules/original/ispirazione-ristretto-italiano-coffee
+Europe,Poland,pl,PLN,https://www.nespresso.com/pl/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Portugal,pt,EUR,https://www.nespresso.com/pt/en/order/capsules/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Romania,ro,RON,https://www.nespresso.com/ro/en/order/capsules/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Russia,ru,RUB,https://www.nespresso.com/ru/ru/coffee-capsules/original/ispirazione-ristretto-italiano
+Europe,Serbia,rs,RSD,https://www.nespresso.rs/en/ispirazione-italiana/224-ispirazione-ristretto-italiano
+Europe,Slovakia,sk,EUR,https://www.nespresso.com/sk/en/order/capsules/original/coffee-capsules-ristretto
+Europe,Sweden,se,SEK,https://www.nespresso.com/se/en/order/capsules/original/ispirazione-ristretto-italiano-coffee
+Europe,Switzerland,ch,CHF,https://www.nespresso.com/ch/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,United Kingdom,uk,GBP,https://www.nespresso.com/uk/en/order/capsules/original/ispirazione-ristretto-italiano-coffee-capsule
+Europe,Cyprus,cy,EUR,https://www.nespresso.com.cy/en/capsules-original/ristretto
+Middle East,Israel,il,ILS,https://www.nespresso.com/il/en/orders/capsules/original/ristretto-capsule-coffee
+Middle East,Jordan,jo,JOD,https://www.buynespresso.com/jo_en/ispirazione-ristretto-italiano
+Middle East,Bahrain,bh,BHD,https://www.buynespresso.com/bh_en/ispirazione-ristretto-italiano
+Middle East,Kingdom of Saudi Arabia,sa,SAR,https://sa.buynespresso.com/sa_en/ispirazione-ristretto-italiano
+Middle East,Kuwait,kw,KWD,https://kw.buynespresso.com/kw_en/ispirazione-ristretto-italiano
+Middle East,Lebanon,lb,LBP,https://www.buynespresso.com/lb_en/ispirazione-ristretto-italiano
+Middle East,Oman,om,OMR,https://www.buynespresso.com/om_en/ispirazione-ristretto-italiano
+Middle East,Qatar,qa,QAR,https://www.buynespresso.com/qa_en/ispirazione-ristretto-italiano-1
+Middle East,Arab Emirates,ae,AED,https://ae.buynespresso.com/ae_en/ispirazione-ristretto-italiano
+Middle East,Turkey,tr,TRY,https://tr.buynespresso.com/tr_en/ispirazione-ristretto-italiano
