@@ -3,7 +3,6 @@ client_secret.json
 #data
 data/
 samples/
-*.json
 #temp files dir
 sandbox/
 *.cfg
